@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Dsw2026Ej15.Domain.Exceptions;
 
-namespace Dsw2026Ej15.Domain.Exceptions
+namespace Dsw2026Ej15.Api.ExceptionsMW
 {
-    public class ExceptionHandlerMW : Exception
+    public class ExceptionHandlerMW
     {
         public readonly RequestDelegate _next;
 

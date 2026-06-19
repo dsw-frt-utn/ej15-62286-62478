@@ -7,9 +7,9 @@ namespace Dsw2026Ej15.Domain.Interfaces
 {
     public interface IPersistence
     {
-        bool AgregarDoctor(Doctor doctor);
-        List<Doctor> GetDoctors();
-        Doctor? GetDoctor(Guid id);
-        List<Speciality> GetSpecialities();
+        Task<bool> AgregarDoctorAsync(Doctor doctor);
+        Task<List<Doctor>> GetDoctorsAsync();
+        Task<Doctor?> GetDoctorAsync(Guid id);
+        Task<List<Speciality>> GetSpecialitiesAsync();
     }
 }

@@ -18,7 +18,7 @@ namespace Dsw2026Ej15.Data
             InitializeDatos();
         }
 
-        private void InitializeDatos()
+        public void InitializeDatos()
         {
             InitializeSpecialities();
             InitializeDoctors();
@@ -44,10 +44,10 @@ namespace Dsw2026Ej15.Data
             var s3 = Specialities.Find(s => s.Name == "Traumatología");
             var s4 = Specialities.Find(s => s.Name == "Oftalmología");
 
-            Doctor d1 = new("Sergio Perez", "5429", true, s3, Guid.Parse("4ab58e4f-4ad5-7bf5-75e5-5bf42a3f4bf1"));
-            Doctor d2 = new("Nahuel Pennisi", "4263", true, s4, Guid.Parse("5f68dae2-e7ff-f4a5-9fd1-f4a5ba45b31f"));
-            Doctor d3 = new("Carlos Alberto Solari", "4121", false, s1, Guid.Parse("ab58a6a2-f4a5-f7a5-a81f-7f4b2ad5f637"));
-            Doctor d4 = new("Agustin Tapia", "7812", true, s2, Guid.Parse("a4b5afb4-f5be-d7bc-77dc-f4aa223fb6ba"));
+            Doctor d1 = new("Sergio Perez", "5429", true, s3!, Guid.Parse("4ab58e4f-4ad5-7bf5-75e5-5bf42a3f4bf1"));
+            Doctor d2 = new("Nahuel Pennisi", "4263", true, s4!, Guid.Parse("5f68dae2-e7ff-f4a5-9fd1-f4a5ba45b31f"));
+            Doctor d3 = new("Carlos Alberto Solari", "4121", false, s1!, Guid.Parse("ab58a6a2-f4a5-f7a5-a81f-7f4b2ad5f637"));
+            Doctor d4 = new("Agustin Tapia", "7812", true, s2!, Guid.Parse("a4b5afb4-f5be-d7bc-77dc-f4aa223fb6ba"));
 
             Doctors.Add(d1);
             Doctors.Add(d2);
@@ -62,25 +62,39 @@ namespace Dsw2026Ej15.Data
             return JsonSerializer.Deserialize<List<T>>(jsonContent);
         }
 
-        public List<Doctor> GetDoctors()
+        public async Task<List<Doctor>> GetDoctorsAsync()
         {
             return Doctors;
         }
-        public Doctor? GetDoctor(Guid id)
+        public async Task<Doctor?> GetDoctorAsync(Guid id)
         {
             return Doctors.Find(d => d.Id == id);
         }
 
-        public List<Speciality> GetSpecialities()
+        public async Task<List<Speciality>> GetSpecialitiesAsync()
         {
             return Specialities;
         }
-        public bool AgregarDoctor(Doctor doctor)
+        public async Task<bool> AgregarDoctorAsync(Doctor doctor)
         {
             try
             {
                 Doctors.Add(doctor);
                 return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public async Task<bool> EliminarDoctorAsync(Guid id)
+        {
+            var doctor = Doctors.Find(d => d.Id == id);
+            try
+            {
+                Doctors.Remove(doctor!);
+                return true;
+
             }
             catch
             {

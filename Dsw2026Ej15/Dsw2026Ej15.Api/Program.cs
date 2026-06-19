@@ -30,11 +30,11 @@ namespace Dsw2026Ej15.Api
 
             app.UseMiddleware<ExceptionHandlerMW>();
             app.MapControllers();
-            
+            app.MapHealthChecks("/health-check");
 
             app.Run();
 
-            app.MapHealthChecks("/health-check");
+            
         }
     }
 }

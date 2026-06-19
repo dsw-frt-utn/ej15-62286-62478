@@ -1,6 +1,7 @@
 
 using Dsw2026Ej15.Data;
 using Dsw2026Ej15.Domain.Interfaces;
+using Dsw2026Ej15.Api.ExceptionsMW;
 
 namespace Dsw2026Ej15.Api
 {
@@ -27,7 +28,7 @@ namespace Dsw2026Ej15.Api
 
             app.UseAuthorization();
 
-
+            app.UseMiddleware<ExceptionHandlerMW>();
             app.MapControllers();
             
 

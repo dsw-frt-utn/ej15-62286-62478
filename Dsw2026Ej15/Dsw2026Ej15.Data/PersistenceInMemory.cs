@@ -11,14 +11,14 @@ namespace Dsw2026Ej15.Data
 {
     public class PersistenceInMemory : IPersistence
     {
-        private readonly List<Speciality> Specialities = [];
-        private readonly List<Doctor> Doctors = [];
+        private readonly List<Speciality> _specialities = [];
+        private readonly List<Doctor> _doctors = [];
         public PersistenceInMemory()
         {
-            InitializeDatos();
+            InitializeData();
         }
 
-        public void InitializeDatos()
+        public void InitializeData()
         {
             InitializeSpecialities();
             InitializeDoctors();
@@ -32,54 +32,64 @@ namespace Dsw2026Ej15.Data
                 foreach (var data in especialidadesData)
                 {
                         Speciality s = new(data.Name, data.Description, data.Id);
-                        Specialities.Add(s);
+                        _specialities.Add(s);
                 }
             }
         }
 
         private void InitializeDoctors()
         {
-            var s1 = Specialities.Find(s => s.Name == "Cardiología");
-            var s2 = Specialities.Find(s => s.Name == "Dermatología");
-            var s3 = Specialities.Find(s => s.Name == "Traumatología");
-            var s4 = Specialities.Find(s => s.Name == "Oftalmología");
+            var s1 = _specialities.Find(s => s.Name == "Traumatología"); 
+            var s2 = _specialities.Find(s => s.Name == "Oftalmología");
+            var s3 = _specialities.Find(s => s.Name == "Cardiología"); 
+            var s4 = _specialities.Find(s => s.Name == "Dermatología"); 
 
-            Doctor d1 = new("Sergio Perez", "5429", true, s3!, Guid.Parse("4ab58e4f-4ad5-7bf5-75e5-5bf42a3f4bf1"));
-            Doctor d2 = new("Nahuel Pennisi", "4263", true, s4!, Guid.Parse("5f68dae2-e7ff-f4a5-9fd1-f4a5ba45b31f"));
-            Doctor d3 = new("Carlos Alberto Solari", "4121", false, s1!, Guid.Parse("ab58a6a2-f4a5-f7a5-a81f-7f4b2ad5f637"));
-            Doctor d4 = new("Agustin Tapia", "7812", true, s2!, Guid.Parse("a4b5afb4-f5be-d7bc-77dc-f4aa223fb6ba"));
+            Doctor d1 = new("Sergio Perez", "5429", s1!, Guid.Parse("4ab58e4f-4ad5-7bf5-75e5-5bf42a3f4bf1"));
+            Doctor d2 = new("Nahuel Pennisi", "4263", s2!, Guid.Parse("5f68dae2-e7ff-f4a5-9fd1-f4a5ba45b31f"));
+            Doctor d3 = new("Carlos Alberto Solari", "4121", s3!, Guid.Parse("ab58a6a2-f4a5-f7a5-a81f-7f4b2ad5f637"));
+            Doctor d4 = new("Agustin Tapia", "7812", s4!, Guid.Parse("a4b5afb4-f5be-d7bc-77dc-f4aa223fb6ba"));
 
-            Doctors.Add(d1);
-            Doctors.Add(d2);
-            Doctors.Add(d3);
-            Doctors.Add(d4);
+            _doctors.Add(d1);
+            _doctors.Add(d2);
+            _doctors.Add(d3);
+            _doctors.Add(d4);
         }
 
         private List<T>? LoadSpecialities<T>(string file)
         {
             string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Sources", $"{file}.json");
             string jsonContent = File.ReadAllText(jsonPath);
-            return JsonSerializer.Deserialize<List<T>>(jsonContent);
+            return JsonSerializer.Deserialize<List<T>>(jsonContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true}) ?? [];
         }
 
-        public async Task<List<Doctor>> GetDoctorsAsync()
+        public async Task<List<Doctor>> GetAllDoctorsAsync()
         {
-            return Doctors;
+            return _doctors;
         }
-        public async Task<Doctor?> GetDoctorAsync(Guid id)
+        public async Task<Doctor?> GetDoctorByIdAsync(Guid id)
         {
-            return Doctors.Find(d => d.Id == id);
+            var doctor = _doctors.Find(d => d.Id == id);
+            if (doctor == null || doctor.IsActive == false)
+            {
+                return null;
+            }
+            return doctor;
         }
 
         public async Task<List<Speciality>> GetSpecialitiesAsync()
         {
-            return Specialities;
+            return _specialities;
+        }
+
+        public async Task<Speciality?> GetSpecialityByIdAsync(Guid id)
+        {
+            return _specialities.Find(s => s.Id == id);
         }
         public async Task<bool> AgregarDoctorAsync(Doctor doctor)
         {
             try
             {
-                Doctors.Add(doctor);
+                _doctors.Add(doctor);
                 return true;
             }
             catch
@@ -87,12 +97,17 @@ namespace Dsw2026Ej15.Data
                 return false;
             }
         }
-        public async Task<bool> EliminarDoctorAsync(Guid id)
+        public async Task<bool> EliminarDoctorPorIdAsync(Guid id)
         {
-            var doctor = Doctors.Find(d => d.Id == id);
+            var doctor = _doctors.Find(d => d.Id == id);
+            if (doctor == null || doctor.IsActive == false)
+            {
+                return false;
+            }
+
             try
             {
-                Doctors.Remove(doctor!);
+                doctor.IsActive = false;
                 return true;
 
             }

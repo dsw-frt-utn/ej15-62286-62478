@@ -14,6 +14,7 @@ namespace Dsw2026Ej15.Api
             builder.Services.AddControllers();
             builder.Services.AddSingleton<IPersistence, PersistenceInMemory>();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddHealthChecks();
             
             var app = builder.Build();
 
@@ -31,6 +32,8 @@ namespace Dsw2026Ej15.Api
             
 
             app.Run();
+
+            app.MapHealthChecks("/health-check");
         }
     }
 }
